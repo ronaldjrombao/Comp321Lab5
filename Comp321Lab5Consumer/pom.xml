@@ -61,8 +61,12 @@
             <artifactId>camel-kafka-starter</artifactId>
             <version>4.10.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-vertx-websocket-starter</artifactId>
+            <version>4.10.2</version>
+        </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>

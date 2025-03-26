@@ -9,14 +9,21 @@ public class IntegrationRoutesBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        from("rest:post:publish?consumes=application/json;inType=TestMessage.class")
+        from("rest:post:publish/test?consumes=application/json;inType=TestMessage.class")
                 .setExchangePattern("InOnly")
+                .setHeader("topic", constant("test"))
+                .to("seda:asyncProcessing")
+                .setBody(constant("Accepted"));
+
+        from("rest:post:publish/order-approved?consumes=application/json;inType=OrderApprovalContract.class")
+                .setExchangePattern("InOnly")
+                .setHeader("topic", constant("orders"))
                 .to("seda:asyncProcessing")
                 .setBody(constant("Accepted"));
 
         from("seda:asyncProcessing")
                 .log("Publish Message to Kafka: ${body}")
-                .to("kafka:test?"
+                .toD("kafka:${header.topic}?"
                         + "brokers=pkc-p11xm.us-east-1.aws.confluent.cloud:9092"
                         + "&securityProtocol=SASL_SSL"
                         + "&saslMechanism=PLAIN"
